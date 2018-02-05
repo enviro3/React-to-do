@@ -6,7 +6,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      todos: [
+      todos_data: [
         { description: 'Walk the cat', isCompleted: true },
         { description: 'Throw the dishes away', isCompleted: false },
         { description: 'Buy new dishes', isCompleted: false }
@@ -15,19 +15,29 @@ class App extends Component {
     };
   }
 
+  deleteTodo(index_to_delete){
+    this.setState(prevState => (
+      {
+        todos_data: prevState.todos_data.filter(
+          (value, index_currently_looked_at) => index_currently_looked_at !== index_to_delete
+        )
+      }
+    ));
+  }
+
   handleChange(e) {
-    this.setState({ newTodoDescription: e.target.value })
+    this.setState({ newTodoDescription: e.target.value });
   }
 
   handleSubmit(e) {
     e.preventDefault();
     if (!this.state.newTodoDescription) { return }
     const newTodo = { description: this.state.newTodoDescription, isCompleted: false };
-    this.setState({ todos: [...this.state.todos, newTodo], newTodoDescription: '' });
+    this.setState({ todos_data: [...this.state.todos_data, newTodo], newTodoDescription: '' });
   }
 
   toggleComplete(index) {
-    const todos = this.state.todos.slice();
+    const todos = this.state.todos_data.slice();
     const todo = todos[index];
     todo.isCompleted = todo.isCompleted ? false : true;
     this.setState({ todos: todos });
@@ -37,8 +47,14 @@ class App extends Component {
     return (
       <div className="App">
         <ul>
-          { this.state.todos.map( (todo, index) =>
-            <ToDo key={ index } description={ todo.description } isCompleted={ todo.isCompleted } toggleComplete={ () => this.toggleComplete(index) } />
+          { this.state.todos_data.map( (todo, index) =>
+            <ToDo
+              key={ index }
+              description={ todo.description }
+              isCompleted={ todo.isCompleted }
+              toggleComplete={ () => this.toggleComplete(index) }
+              deleteTodo={ () => this.deleteTodo(index) }
+            />
           )}
         </ul>
         <form onSubmit={ (e) => this.handleSubmit(e) }>
